@@ -1,0 +1,7 @@
+#CMake
+CMakeFiles/
+CMakeCache.txt
+CmakeLists.txt.user
+Cmake_install.cmake
+launch_visual.bat
+Makefile
