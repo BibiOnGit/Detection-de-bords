@@ -1,6 +1,7 @@
 
 #include <Imagine/Images.h>
 #include "tree.h"
+#include "histogramme.h"
 #include <iostream>
 using namespace Imagine;
 
