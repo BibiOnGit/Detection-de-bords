@@ -11,6 +11,7 @@ add_library(Shape
             shape.h shape.cpp
             tree.h tree.cpp
             utils.h utils.cpp)
+            histogramme.h histogramme.cpp)
 
 add_executable(boundaries main.cpp)
 ImagineUseModules(boundaries Images)

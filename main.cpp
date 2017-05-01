@@ -2,6 +2,8 @@
 #include <Imagine/Images.h>
 #include "tree.h"
 #include "utils.h"
+
+#include "histogramme.h"
 #include <iostream>
 using namespace Imagine;
 
@@ -36,4 +38,3 @@ int main(int argc, char* argv[]) {
 
     return 0;
 }
-
