@@ -5,4 +5,7 @@ CmakeLists.txt.user
 Cmake_install.cmake
 launch_visual.bat
 Detection_de_bord.cbp
+Boundaries.cbp
+boundaries.exe
+libShape.a
 Makefile

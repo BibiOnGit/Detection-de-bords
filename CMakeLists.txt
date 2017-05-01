@@ -9,7 +9,8 @@ project(Boundaries)
 add_library(Shape
             flst.cpp
             shape.h shape.cpp
-            tree.h tree.cpp)
+            tree.h tree.cpp
+            utils.h utils.cpp)
 
 add_executable(boundaries main.cpp)
 ImagineUseModules(boundaries Images)

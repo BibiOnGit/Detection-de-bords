@@ -1,9 +1,7 @@
-<<<<<<< HEAD
 
-=======
->>>>>>> origin/master
 #include <Imagine/Images.h>
 #include "tree.h"
+#include "utils.h"
 #include <iostream>
 using namespace Imagine;
 
@@ -35,10 +33,7 @@ int main(int argc, char* argv[]) {
     }
 
     endGraphics();
+
     return 0;
 }
 
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/master
