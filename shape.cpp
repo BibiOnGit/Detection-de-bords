@@ -30,6 +30,29 @@ LsShape* LsShape::find_child() {
     return pShapeNotRemoved;  
 }
 
+
+/// Returns the floor of the euclidien length of the level line
+int LsShape::length(){
+    float longueur=0;
+    for(int i=0;i<contour.size()-1;i++){
+        if(contour[i].x==contour[i+1].x ||contour[i].y==contour[i+1].y ){
+            longueur=longueur+1;
+        }
+        else{
+            longueur=longueur+std::sqrt(2);
+        }
+
+    }
+    if(contour[0].x==contour[contour.size()-1].x ||contour[0].y==contour[contour.size()-1].y ){
+        longueur=longueur+1;
+    }
+    else{
+        longueur=longueur+std::sqrt(2);
+    }
+    return int(longueur);
+
+}
+
 /// Find next sibling, taking into account that some shapes are removed
 LsShape* LsShape::find_sibling() {
     LsShape *pShape1 = 0, *pShape2 = 0;
