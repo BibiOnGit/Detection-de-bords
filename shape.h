@@ -20,6 +20,8 @@ struct LsShape {
     LsPoint* pixels; ///< Array of pixels in shape
     std::vector<LsPoint> contour; ///< Level line
 
+    int length();///<Floor of the length of the level line
+
     int area; ///< Number of pixels in the shape
 
     // Tree structure
