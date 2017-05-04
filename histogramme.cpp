@@ -16,7 +16,7 @@ void gradient (unsigned char * u, unsigned char * grad, int h, int w){
     }
 }
 
-void histo (int hist[130051], unsigned char * grad, int h, int w){// le 130051 provient du nombre total de valeurs de gradients
+void histo (int hist[], unsigned char * grad, int h, int w){// le 130051 provient du nombre total de valeurs de gradients
     for( int i=0;i<h;i++){
         for(int j=0;j<w;j++){
             hist[grad[i*w+j]]++;
@@ -28,7 +28,7 @@ void histo (int hist[130051], unsigned char * grad, int h, int w){// le 130051 p
 
 }
 
-double Hc(int mu){
+double Hc(int mu, int hist[]){
     if (mu==130051){
         return 0;
     }
