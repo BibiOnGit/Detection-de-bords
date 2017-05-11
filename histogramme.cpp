@@ -34,3 +34,15 @@ double Hc(int mu, int hist[]){
     }
     return double(hist[mu+1])/double(hist[1]);
 }
+
+
+
+
+
+
+
+
+
+
+
+

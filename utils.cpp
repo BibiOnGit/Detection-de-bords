@@ -30,5 +30,16 @@ float binomiale(int k, int n, float p){
         sum+= t[ind]*pow(p,i)*pow(1-p,n-i);
     }
     return sum;
-
 }
+
+
+
+
+
+
+
+
+
+
+
+

@@ -2,6 +2,7 @@
 #define TREE_H
 
 #include "shape.h"
+#include "histogramme.h"
 
 /// Tree of shapes.
 struct LsTree {
@@ -17,8 +18,15 @@ struct LsTree {
 
     /// For each pixel, the smallest shape containing it
     LsShape** smallestShape;
+
+
+
+
 private:
     void flst_td(const unsigned char* gray); ///< Top-down algo
 };
+
+
+
 
 #endif

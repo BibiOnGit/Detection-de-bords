@@ -125,3 +125,55 @@ LsTreeIterator& LsTreeIterator::operator++() {
     }
     return *this;
 }
+
+// Function NFA
+double LsShape::NFAk(int Nll, int K, double Hc){
+    double l2n = double(length())/2*double(contour.size());
+    double min = binomiale(int(contour.size() * l2n), int((K-1) * l2n), Hc );
+    return Nll * min * K;
+}
+
+void LsShape::remove(){
+    LsShape* parent = find_parent();
+    if(! parent){
+        return;
+    }
+    LsShape* previous_sibling = find_prev_sibling();
+    if (previous_sibling){
+        if(this->child){
+            previous_sibling->sibling=this->child;
+        }
+        else if(this->sibling){
+            previous_sibling->sibling=this->sibling;
+        }
+    }
+    else{
+        if (this->child){
+            this->parent->child=this->child;
+        }
+        else{
+            this->parent->child=this->sibling;
+        }
+    }
+    LsShape* child = this->find_child();
+    LsShape* prev_child = 0;
+    while (child){
+        child->parent=this->parent;
+        prev_child=child;
+        child=child->sibling;
+    }
+    if (this->sibling){
+        if (prev_child){
+            prev_child->sibling=this->sibling;
+        }
+    }
+}
+
+
+
+
+
+
+
+
+

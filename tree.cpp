@@ -51,3 +51,4 @@ LsShape* LsTree::smallest_shape(int x, int y) {
         pShape = pShape->find_parent();
     return pShape;
 }
+

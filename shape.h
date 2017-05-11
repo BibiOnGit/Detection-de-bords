@@ -1,6 +1,7 @@
 #ifndef SHAPE_H
 #define SHAPE_H
 #include <vector>
+#include "utils.h"
 
 /// Structure for a pixel, 2 coordinates in image plane.
 struct LsPoint {
@@ -34,6 +35,12 @@ struct LsShape {
     LsShape* find_child();
     LsShape* find_sibling();
     LsShape* find_prev_sibling();
+
+    // Function NFA
+    double NFAk(int Nll, int K, double Hc);
+
+    // To remove non significant shapes
+    void remove();
 };
 
 /// To walk the tree in pre- or post-order
@@ -73,5 +80,6 @@ inline bool LsTreeIterator::operator!=(const LsTreeIterator& it) const
 
 inline LsShape* LsTreeIterator::operator*() const
 { return s; }
+
 
 #endif
