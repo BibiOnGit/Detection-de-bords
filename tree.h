@@ -24,6 +24,7 @@ struct LsTree {
 
 private:
     void flst_td(const unsigned char* gray); ///< Top-down algo
+
 };
 
 

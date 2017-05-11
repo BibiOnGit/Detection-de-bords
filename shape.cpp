@@ -169,8 +169,29 @@ void LsShape::remove(){
     }
 }
 
+unsigned char LsShape::MuK(int K, unsigned char * grad, int w){
+    std::vector<unsigned char> gradient_shape;
+    for (int i=0; i<contour.size(); i++){
+        gradient_shape.push_back(grad[contour[i].x+w*contour[i].y]);
+    }
+    std::sort(gradient_shape.begin(),gradient_shape.end());
+    return gradient_shape[K-1];
+}
 
 
+
+void LsShape::MeanB(int Nll, double epsilon, int K, unsigned char * grad, int w, int hist[]){
+    unsigned char Mu = MuK(K,grad,w);
+    if (NFAk(Nll,K,Hc(Mu,hist))>epsilon){
+        remove();
+    }
+    if (this->child){
+        child->MeanB(Nll,epsilon,K,grad,w,hist);
+    }
+    if (this->sibling){
+        child->MeanB(Nll,epsilon,K,grad,w,hist);
+    }
+}
 
 
 

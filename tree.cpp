@@ -52,3 +52,16 @@ LsShape* LsTree::smallest_shape(int x, int y) {
     return pShape;
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
