@@ -51,3 +51,81 @@ LsShape* LsTree::smallest_shape(int x, int y) {
         pShape = pShape->find_parent();
     return pShape;
 }
+
+void LsTree::maxMeaningfulBoundaries_rec(LsShape* shape,Monotony monotony, double minNFA, short int previousGrey){
+    int childNumber = shape->childNumber();
+    double currentNFA = shape->nfa();
+    if(childNumber == 0 ){
+        if((monotony == INCREASING && previousGrey <=shape->gray)
+                ||(monotony == DECREASING && previousGrey >=shape->gray)
+                || monotony == UNDETERMINED){
+            minNfaShapeKeeper(shape,currentNFA,minNFA,false);
+            return;
+        }
+     }
+    else{
+        if(monotony == NOT_MONOTONE && childNumber == 1){
+            monotony = UNDETERMINED;
+            minNFA = currentNFA;
+        }
+        else if(monotony == UNDETERMINED){
+            minNfaShapeKeeper(shape,currentNFA,minNFA,false);
+            if(childNumber == 1)
+                monotony = (previousGrey > shape->gray)?DECREASING:INCREASING;
+            else
+                monotony = NOT_MONOTONE;
+        }
+        else if(monotony == DECREASING || monotony == INCREASING){
+            monotoneSectionManager(shape,monotony,previousGrey,minNFA,currentNFA,childNumber);
+        }
+        previousGrey = shape->gray;
+        shape = shape->find_child();
+        do{
+            maxMeaningfulBoundaries_rec(shape,monotony,minNFA,previousGrey);
+            shape = shape->find_sibling();
+        }while(shape !=0);
+    }
+}
+void LsTree::maxMeaningfulBoundaries(){
+    setRemovable();
+    LsShape* root = &shapes[0];
+    maxMeaningfulBoundaries_rec(root,NOT_MONOTONE,0,0);
+}
+void LsTree::monotoneSectionManager(LsShape *shape,Monotony &monotony,short int previousGrey,double minNFA, double currentNFA, int childNumber){
+    char sign = (monotony == INCREASING)?1:-1;
+    if(childNumber >1){
+        monotony = NOT_MONOTONE;
+    }
+    else{
+        if(sign*shape->gray >= sign*previousGrey){
+            if(sign*shape->find_child()->gray < sign*shape->gray)
+                minNfaShapeKeeper(shape,currentNFA,minNFA,true);
+            else
+                minNfaShapeKeeper(shape,currentNFA,minNFA,false);
+        }
+        else{
+            monotony = (monotony==INCREASING)?DECREASING:INCREASING;
+            if(sign*shape->find_child()->gray > sign*shape->gray)
+                minNfaShapeKeeper(shape,currentNFA,minNFA,true);
+            else
+                minNfaShapeKeeper(shape,currentNFA,minNFA,false);
+        }
+    }
+}
+void LsTree::minNfaShapeKeeper(LsShape *shape,double currentNFA,double &minNFA, bool shapeIsPivot){
+    LsShape* parent = shape->find_parent();
+    if(currentNFA < minNFA && parent->removable){
+        parent->remove();
+        minNFA = currentNFA;
+        if(shapeIsPivot){
+            shape->removable = false;
+        }
+    }
+    else if(!shapeIsPivot)
+        shape->remove();
+}
+void LsTree::setRemovable(){
+    for(int i=0;i<iNbShapes;i++){
+        shapes[i].removable = true;
+    }
+}

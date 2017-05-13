@@ -32,6 +32,14 @@ struct LsShape {
     LsShape* find_child();
     LsShape* find_sibling();
     LsShape* find_prev_sibling();
+
+    double nfa();
+
+    void remove();
+
+    int childNumber();
+
+    bool removable;
 };
 
 /// To walk the tree in pre- or post-order

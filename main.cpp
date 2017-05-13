@@ -20,21 +20,12 @@ int main(int argc, char* argv[]) {
     openWindow(im.width(), im.height());
     display(im);
 
+    click();
+
     LsTree tree(im.data(), im.width(), im.height());
 
-    int x, y;
-    while(getMouse(x,y)==1) {
-        LsShape* s = tree.smallest_shape(x,y);
-        std::cout << s->area << std::endl;
-        std::vector<LsPoint>::iterator it, end=s->contour.end();
-        noRefreshBegin();
-        display(im);
-        for(it=s->contour.begin(); it!=end; ++it)
-            drawPoint(it->x, it->y, RED);
-        noRefreshEnd();
-    }
+    std::cout << tree.shapes[0].gray << std::endl;
 
     endGraphics();
-
     return 0;
 }

@@ -64,6 +64,28 @@ LsShape* LsShape::find_prev_sibling() {
     return s;
 }
 
+void LsShape::remove(){
+
+}
+double LsShape::nfa(){
+
+}
+
+int LsShape::childNumber(){
+    if(find_child() ==0){
+        return 0;
+    }
+    else{
+        LsShape* currentChild = find_child();
+        int counter = 1;
+        while(currentChild ->find_sibling() !=0){
+            counter++;
+            currentChild = currentChild->find_sibling();
+        }
+
+    }
+}
+
 LsTreeIterator::LsTreeIterator(Order ord, LsShape* shape, bool /*dummy*/)
 : s(shape), o(ord) {}
 
