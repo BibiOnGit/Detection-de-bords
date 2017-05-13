@@ -1,6 +1,10 @@
 #ifndef SHAPE_H
 #define SHAPE_H
 #include <vector>
+#include <algorithm>
+#include "utils.h"
+#include "histogramme.h"
+
 
 /// Structure for a pixel, 2 coordinates in image plane.
 struct LsPoint {
@@ -20,6 +24,8 @@ struct LsShape {
     LsPoint* pixels; ///< Array of pixels in shape
     std::vector<LsPoint> contour; ///< Level line
 
+    int length();///<Floor of the length of the level line
+
     int area; ///< Number of pixels in the shape
 
     // Tree structure
@@ -33,13 +39,23 @@ struct LsShape {
     LsShape* find_sibling();
     LsShape* find_prev_sibling();
 
-    double nfa();
-
-    void remove();
-
     int childNumber();
 
     bool removable;
+
+    double NFA;
+
+    // Function NFA : set the variable NFA
+    void NFAk(int Nll, int K, double Hc);
+
+    // To remove non significant shapes
+    void remove();
+
+    //Find the Kth smallest gradient
+    unsigned char MuK(int K, unsigned char * grad, int w);
+
+    //Select meaningful boundaries
+    void MeanB(int Nll, double epsilon, int K, unsigned char * grad, int w, int hist[]);
 };
 
 /// To walk the tree in pre- or post-order
@@ -79,5 +95,6 @@ inline bool LsTreeIterator::operator!=(const LsTreeIterator& it) const
 
 inline LsShape* LsTreeIterator::operator*() const
 { return s; }
+
 
 #endif

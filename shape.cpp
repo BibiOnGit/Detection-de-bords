@@ -30,6 +30,29 @@ LsShape* LsShape::find_child() {
     return pShapeNotRemoved;  
 }
 
+
+/// Returns the floor of the euclidien length of the level line
+int LsShape::length(){
+    float longueur=0;
+    for(int i=0;i<contour.size()-1;i++){
+        if(contour[i].x==contour[i+1].x ||contour[i].y==contour[i+1].y ){
+            longueur=longueur+1;
+        }
+        else{
+            longueur=longueur+std::sqrt(2);
+        }
+
+    }
+    if(contour[0].x==contour[contour.size()-1].x ||contour[0].y==contour[contour.size()-1].y ){
+        longueur=longueur+1;
+    }
+    else{
+        longueur=longueur+std::sqrt(2);
+    }
+    return int(longueur);
+
+}
+
 /// Find next sibling, taking into account that some shapes are removed
 LsShape* LsShape::find_sibling() {
     LsShape *pShape1 = 0, *pShape2 = 0;
@@ -64,12 +87,6 @@ LsShape* LsShape::find_prev_sibling() {
     return s;
 }
 
-void LsShape::remove(){
-
-}
-double LsShape::nfa(){
-
-}
 
 int LsShape::childNumber(){
     if(find_child() ==0){
@@ -124,3 +141,77 @@ LsTreeIterator& LsTreeIterator::operator++() {
     }
     return *this;
 }
+
+// Function NFA
+void LsShape::NFAk(int Nll, int K, double Hc){
+    double l2n = double(length())/2*double(contour.size());
+    double min = binomiale(int(contour.size() * l2n), int((K-1) * l2n), Hc );
+    NFA =  Nll * min * K;
+}
+
+void LsShape::remove(){
+    LsShape* parent = find_parent();
+    if(! parent){
+        return;
+    }
+    LsShape* previous_sibling = find_prev_sibling();
+    if (previous_sibling){
+        if(this->child){
+            previous_sibling->sibling=this->child;
+        }
+        else if(this->sibling){
+            previous_sibling->sibling=this->sibling;
+        }
+    }
+    else{
+        if (this->child){
+            this->parent->child=this->child;
+        }
+        else{
+            this->parent->child=this->sibling;
+        }
+    }
+    LsShape* child = this->find_child();
+    LsShape* prev_child = 0;
+    while (child){
+        child->parent=this->parent;
+        prev_child=child;
+        child=child->sibling;
+    }
+    if (this->sibling){
+        if (prev_child){
+            prev_child->sibling=this->sibling;
+        }
+    }
+}
+
+unsigned char LsShape::MuK(int K, unsigned char * grad, int w){
+    std::vector<unsigned char> gradient_shape;
+    for (int i=0; i<contour.size(); i++){
+        gradient_shape.push_back(grad[contour[i].x+w*contour[i].y]);
+    }
+    std::sort(gradient_shape.begin(),gradient_shape.end());
+    return gradient_shape[K-1];
+}
+
+
+
+void LsShape::MeanB(int Nll, double epsilon, int K, unsigned char * grad, int w, int hist[]){
+    unsigned char Mu = MuK(K,grad,w);
+    NFAk(Nll,K,Hc(Mu,hist));
+    if (NFA>epsilon){
+        remove();
+    }
+    if (this->child){
+        child->MeanB(Nll,epsilon,K,grad,w,hist);
+    }
+    if (this->sibling){
+        child->MeanB(Nll,epsilon,K,grad,w,hist);
+    }
+}
+
+
+
+
+
+

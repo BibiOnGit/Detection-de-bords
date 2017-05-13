@@ -52,9 +52,10 @@ LsShape* LsTree::smallest_shape(int x, int y) {
     return pShape;
 }
 
-void LsTree::maxMeaningfulBoundaries_rec(LsShape* shape,Monotony monotony, double minNFA, short int previousGrey){
+void LsTree::maxMeaningfulBoundaries_rec(LsShape* shape, Monotony monotony, double minNFA,
+                                         short int previousGrey){
     int childNumber = shape->childNumber();
-    double currentNFA = shape->nfa();
+    double currentNFA = shape->NFA;
     if(childNumber == 0 ){
         if((monotony == INCREASING && previousGrey <=shape->gray)
                 ||(monotony == DECREASING && previousGrey >=shape->gray)
@@ -129,3 +130,4 @@ void LsTree::setRemovable(){
         shapes[i].removable = true;
     }
 }
+
