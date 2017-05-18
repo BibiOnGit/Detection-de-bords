@@ -4,11 +4,11 @@
 #include <vector>
 #include <iostream>
 #include <cmath>
-#include "shape.h"
+#include <cassert>
 
 void pascalTriangle(std::vector<int> &t, int n);
 
-float binomiale(int k, int n, float p);
+double binomiale(int k, int n, float p);
 
 
 #endif // UTILS_H

@@ -17,15 +17,25 @@ int main(int argc, char* argv[]) {
         std::cerr << "Error loading image " << argv[1] << std::endl;
         return 1;
     }
-    openWindow(im.width(), im.height());
+    int w = im.width();
+    int h = im.height();
+    float Kpurcent = 0.1;
+    int epsilon = 1000;
+    openWindow(w, h);
     display(im);
 
     click();
+    LsTree tree(im.data(), w, h);
 
-    LsTree tree(im.data(), im.width(), im.height());
 
-    std::cout << tree.shapes[0].gray << std::endl;
+    unsigned char * grad;
 
+    gradient(im.data(),grad,h,w);
+    int hist[130051];
+    histo(hist,grad,h,w);
+    tree.shapes[0].MeanB(tree.iNbShapes,epsilon,Kpurcent,grad,w,hist);
+    tree.maxMeaningfulBoundaries();
     endGraphics();
+    delete [] grad;
     return 0;
 }

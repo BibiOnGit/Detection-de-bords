@@ -80,6 +80,7 @@ LsShape* LsShape::find_prev_sibling() {
         return 0;
     pNext = pNext->find_child();
     LsShape* s = 0;
+    std::cout << "find_prev_sibling" <<std::endl;
     while(pNext != this) {
         s = pNext;
         pNext = s->find_sibling();
@@ -143,9 +144,11 @@ LsTreeIterator& LsTreeIterator::operator++() {
 }
 
 // Function NFA
-void LsShape::NFAk(int Nll, int K, double Hc){
-    double l2n = double(length())/2*double(contour.size());
-    double min = binomiale(int(contour.size() * l2n), int((K-1) * l2n), Hc );
+void LsShape::NFAk(int Nll, float Kpercent, double Hc){
+    int K = Kpercent*contour.size();
+    double l2n = double(length())/(2*double(contour.size()));
+//    std::cout << "K "<<int((K-1) * l2n)<<" n " << int(contour.size() * l2n) << std::endl;
+    double min = binomiale(int((K-1) * l2n),int(contour.size() * l2n), Hc );
     NFA =  Nll * min * K;
 }
 
@@ -154,29 +157,38 @@ void LsShape::remove(){
     if(! parent){
         return;
     }
+        std::cout << "test_remove1" <<std::endl;
     LsShape* previous_sibling = find_prev_sibling();
     if (previous_sibling){
+        std::cout << "test_remove2" <<std::endl;
         if(this->child){
             previous_sibling->sibling=this->child;
         }
         else if(this->sibling){
             previous_sibling->sibling=this->sibling;
         }
+        else{
+            previous_sibling->sibling =0;
+        }
+
     }
     else{
         if (this->child){
+            std::cout << "test_remove3" <<std::endl;
             this->parent->child=this->child;
         }
         else{
+            std::cout << "test_remove4" <<std::endl;
             this->parent->child=this->sibling;
         }
     }
-    LsShape* child = this->find_child();
+
+    LsShape* brother = this->child;
     LsShape* prev_child = 0;
-    while (child){
-        child->parent=this->parent;
-        prev_child=child;
-        child=child->sibling;
+    while (brother){
+        brother->parent=this->parent;
+        prev_child=brother;
+        brother=brother->sibling;
     }
     if (this->sibling){
         if (prev_child){
@@ -185,28 +197,35 @@ void LsShape::remove(){
     }
 }
 
-unsigned char LsShape::MuK(int K, unsigned char * grad, int w){
+unsigned char LsShape::MuK(float Kpercent, unsigned char * grad, int w){
+    int K = Kpercent*contour.size();
     std::vector<unsigned char> gradient_shape;
     for (int i=0; i<contour.size(); i++){
         gradient_shape.push_back(grad[contour[i].x+w*contour[i].y]);
     }
     std::sort(gradient_shape.begin(),gradient_shape.end());
+    if(K==0){
+        return gradient_shape[0];
+    }
     return gradient_shape[K-1];
 }
 
 
 
-void LsShape::MeanB(int Nll, double epsilon, int K, unsigned char * grad, int w, int hist[]){
-    unsigned char Mu = MuK(K,grad,w);
-    NFAk(Nll,K,Hc(Mu,hist));
+void LsShape::MeanB(int Nll, double epsilon, float Kpercent, unsigned char * grad, int w, int hist[]){
+    unsigned char Mu = MuK(Kpercent,grad,w);
+    NFAk(Nll,Kpercent,Hc(Mu,hist));
     if (NFA>epsilon){
+        std::cout << "test_remove" <<std::endl;
         remove();
     }
     if (this->child){
-        child->MeanB(Nll,epsilon,K,grad,w,hist);
+        std::cout << "test_sibling" <<std::endl;
+        child->MeanB(Nll,epsilon,Kpercent,grad,w,hist);
     }
     if (this->sibling){
-        child->MeanB(Nll,epsilon,K,grad,w,hist);
+        std::cout << "test_sibling" <<std::endl;
+        sibling->MeanB(Nll,epsilon,Kpercent,grad,w,hist);
     }
 }
 

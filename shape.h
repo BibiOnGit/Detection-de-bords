@@ -4,6 +4,7 @@
 #include <algorithm>
 #include "utils.h"
 #include "histogramme.h"
+#include "Imagine/Graphics.h"
 
 
 /// Structure for a pixel, 2 coordinates in image plane.
@@ -46,16 +47,18 @@ struct LsShape {
     double NFA;
 
     // Function NFA : set the variable NFA
-    void NFAk(int Nll, int K, double Hc);
+    void NFAk(int Nll, float Kpercent, double Hc);
 
     // To remove non significant shapes
     void remove();
 
+    void setShape(LsShape *parent, LsShape *child, LsShape *sibling);
+
     //Find the Kth smallest gradient
-    unsigned char MuK(int K, unsigned char * grad, int w);
+    unsigned char MuK(float Kpercent, unsigned char * grad, int w);
 
     //Select meaningful boundaries
-    void MeanB(int Nll, double epsilon, int K, unsigned char * grad, int w, int hist[]);
+    void MeanB(int Nll, double epsilon, float Kpercent, unsigned char * grad, int w, int hist[]);
 };
 
 /// To walk the tree in pre- or post-order

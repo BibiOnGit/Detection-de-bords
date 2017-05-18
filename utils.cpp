@@ -1,5 +1,4 @@
 #include "utils.h"
-
 void pascalTriangle(std::vector<int>& t, int n){//Fill t with the pascal triangle
     for(int i=1; i<=n;i++){
         for(int j=0;j<=i/2;j++){
@@ -18,11 +17,12 @@ void pascalTriangle(std::vector<int>& t, int n){//Fill t with the pascal triangl
     }
 }
 
-float binomiale(int k, int n, float p){//Compute the sum of the tail of the binomial from the index k
+double binomiale(int k, int n, float p){//Compute the sum of the tail of the binomial from the index k
     std::vector<int> t;
     t.push_back(1);//zero choose zero
+    assert(k <=n);
     pascalTriangle(t,n);
-    float sum = 0;
+    double sum = 0;
     for(int i=k;i<=n;i++){
         int ind = t.size() - (n-k+1)-k+i;
         sum+= t[ind]*pow(p,i)*pow(1-p,n-i);

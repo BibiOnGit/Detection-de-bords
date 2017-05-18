@@ -3,6 +3,7 @@
 
 
 void gradient (unsigned char * u, unsigned char * grad, int h, int w){
+    grad = new unsigned char[h*w];
     for (int i=0; i<h; i++){
         for (int j=0; j<w; j++){
             if(i==0 || j==0){
