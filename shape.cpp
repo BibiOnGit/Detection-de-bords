@@ -103,6 +103,12 @@ int LsShape::childNumber(){
 
     }
 }
+void LsShape::setShape(LsShape* parent, LsShape* child, LsShape* sibling){
+    this->parent =parent;
+    this->child = child;
+    this->sibling = sibling;
+}
+
 
 LsTreeIterator::LsTreeIterator(Order ord, LsShape* shape, bool /*dummy*/)
 : s(shape), o(ord) {}
@@ -157,45 +163,53 @@ void LsShape::remove(){
     if(! parent){
         return;
     }
-        std::cout << "test_remove1" <<std::endl;
-    LsShape* previous_sibling = find_prev_sibling();
-    if (previous_sibling){
-        std::cout << "test_remove2" <<std::endl;
-        if(this->child){
-            previous_sibling->sibling=this->child;
-        }
-        else if(this->sibling){
-            previous_sibling->sibling=this->sibling;
-        }
-        else{
-            previous_sibling->sibling =0;
-        }
-
-    }
-    else{
-        if (this->child){
-            std::cout << "test_remove3" <<std::endl;
-            this->parent->child=this->child;
-        }
-        else{
-            std::cout << "test_remove4" <<std::endl;
-            this->parent->child=this->sibling;
-        }
-    }
-
-    LsShape* brother = this->child;
-    LsShape* prev_child = 0;
-    while (brother){
-        brother->parent=this->parent;
-        prev_child=brother;
-        brother=brother->sibling;
-    }
-    if (this->sibling){
-        if (prev_child){
-            prev_child->sibling=this->sibling;
-        }
-    }
+    bIgnore = true;
 }
+
+//void LsShape::remove(){
+//    LsShape* parent = find_parent();
+//    if(! parent){
+//        return;
+//    }
+//        std::cout << "test_remove1" <<std::endl;
+//    LsShape* previous_sibling = find_prev_sibling();
+//    if (previous_sibling){
+//        std::cout << "test_remove2" <<std::endl;
+//        if(this->child){
+//            previous_sibling->sibling=this->child;
+//        }
+//        else if(this->sibling){
+//            previous_sibling->sibling=this->sibling;
+//        }
+//        else{
+//            previous_sibling->sibling =0;
+//        }
+
+//    }
+//    else{
+//        if (this->child){
+//            std::cout << "test_remove3" <<std::endl;
+//            this->parent->child=this->child;
+//        }
+//        else{
+//            std::cout << "test_remove4" <<std::endl;
+//            this->parent->child=this->sibling;
+//        }
+//    }
+
+//    LsShape* brother = this->child;
+//    LsShape* prev_child = 0;
+//    while (brother){
+//        brother->parent=this->parent;
+//        prev_child=brother;
+//        brother=brother->sibling;
+//    }
+//    if (this->sibling){
+//        if (prev_child){
+//            prev_child->sibling=this->sibling;
+//        }
+//    }
+//}
 
 unsigned char LsShape::MuK(float Kpercent, unsigned char * grad, int w){
     int K = Kpercent*contour.size();
@@ -216,15 +230,15 @@ void LsShape::MeanB(int Nll, double epsilon, float Kpercent, unsigned char * gra
     unsigned char Mu = MuK(Kpercent,grad,w);
     NFAk(Nll,Kpercent,Hc(Mu,hist));
     if (NFA>epsilon){
-        std::cout << "test_remove" <<std::endl;
         remove();
     }
-    if (this->child){
-        std::cout << "test_sibling" <<std::endl;
+
+    if (this->find_child()){
+        LsShape* child = this->find_child();
         child->MeanB(Nll,epsilon,Kpercent,grad,w,hist);
     }
-    if (this->sibling){
-        std::cout << "test_sibling" <<std::endl;
+    if (this->find_sibling()){
+        LsShape* sibling = this->find_sibling();
         sibling->MeanB(Nll,epsilon,Kpercent,grad,w,hist);
     }
 }

@@ -4,7 +4,6 @@
 #include <algorithm>
 #include "utils.h"
 #include "histogramme.h"
-#include "Imagine/Graphics.h"
 
 
 /// Structure for a pixel, 2 coordinates in image plane.

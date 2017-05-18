@@ -4,8 +4,10 @@
 #include "shape.h"
 #include "histogramme.h"
 
+
 /// Tree of shapes.
 struct LsTree {
+    LsTree(LsShape* shapes);
     LsTree(const unsigned char* gray, int w, int h);
     ~LsTree();
 
@@ -22,6 +24,7 @@ struct LsTree {
 
     void maxMeaningfulBoundaries();
     ///Keep only the maximal meaningful boundaries among the meaningful boundaries
+    ///
 
 
 private:

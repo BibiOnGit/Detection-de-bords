@@ -1,6 +1,9 @@
 #include "tree.h"
 #include <cassert>
 
+LsTree::LsTree(LsShape* shapes){ ///Constructor test
+    this->shapes = shapes;
+}
 /// Constructor.
 LsTree::LsTree(const unsigned char* gray, int w, int h) {
     nrow = h; ncol = w;
@@ -51,6 +54,7 @@ LsShape* LsTree::smallest_shape(int x, int y) {
         pShape = pShape->find_parent();
     return pShape;
 }
+
 
 void LsTree::maxMeaningfulBoundaries_rec(LsShape* shape, Monotony monotony, double minNFA,
                                          short int previousGrey){
