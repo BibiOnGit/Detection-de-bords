@@ -25,7 +25,7 @@ struct LsTree {
     void maxMeaningfulBoundaries();
     ///Keep only the maximal meaningful boundaries among the meaningful boundaries
     ///
-
+    void drawTree();
 
 private:
     enum Monotony{INCREASING, DECREASING, UNDETERMINED, NOT_MONOTONE};
@@ -42,7 +42,6 @@ private:
     ///Remove the shape(if it isn't a pivot) which has the bigger NFA between the current shape and his parent
 
     void flst_td(const unsigned char* gray); ///< Top-down algo
-
 
     void setRemovable();
 

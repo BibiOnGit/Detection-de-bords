@@ -232,14 +232,14 @@ void LsShape::MeanB(int Nll, double epsilon, float Kpercent, unsigned char * gra
     if (NFA>epsilon){
         remove();
     }
+    if (this->find_sibling()){
+        LsShape* sibling = this->find_sibling();
+        sibling->MeanB(Nll,epsilon,Kpercent,grad,w,hist);
+    }
 
     if (this->find_child()){
         LsShape* child = this->find_child();
         child->MeanB(Nll,epsilon,Kpercent,grad,w,hist);
-    }
-    if (this->find_sibling()){
-        LsShape* sibling = this->find_sibling();
-        sibling->MeanB(Nll,epsilon,Kpercent,grad,w,hist);
     }
 }
 

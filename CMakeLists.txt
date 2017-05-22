@@ -13,6 +13,6 @@ add_library(Shape
             utils.h utils.cpp
             histogramme.h histogramme.cpp)
 
-add_executable(boundaries main.cpp)
+add_executable(boundaries main.cpp drawTree.cpp drawTree.h)
 ImagineUseModules(boundaries Images)
 target_link_libraries(boundaries Shape)
