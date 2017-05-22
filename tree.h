@@ -22,6 +22,8 @@ struct LsTree {
     LsShape** smallestShape;
 
 
+    void MeanB(int Nll, double epsilon, float Kpercent, unsigned char * grad, int w, int hist[]);
+
     void maxMeaningfulBoundaries();
     ///Keep only the maximal meaningful boundaries among the meaningful boundaries
     ///
@@ -45,6 +47,7 @@ private:
 
 
     void setRemovable();
+
 
 };
 

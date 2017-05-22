@@ -56,6 +56,20 @@ LsShape* LsTree::smallest_shape(int x, int y) {
 }
 
 
+void LsTree::MeanB(int Nll, double epsilon, float Kpercent, unsigned char * grad, int w, int hist[]){///applied on the tree
+    LsTreeIterator itTree(LsTreeIterator::Pre,&this->shapes[0]);
+    LsTreeIterator endTree =itTree.end(LsTreeIterator::Pre,&this->shapes[0]);
+    unsigned char Mu;
+    for(;itTree!=endTree;++itTree){
+        LsShape* currentShape = *itTree;
+        Mu = currentShape->MuK(Kpercent,grad,w);
+        currentShape->NFAk(Nll,Kpercent,Hc(Mu,hist));
+        if(currentShape->NFA>epsilon){
+            currentShape->remove();
+        }
+    }
+}
+
 void LsTree::maxMeaningfulBoundaries_rec(LsShape* shape, Monotony monotony, double minNFA,
                                          short int previousGrey){
     int childNumber = shape->childNumber();
