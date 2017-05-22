@@ -20,11 +20,14 @@ int main(int argc, char* argv[]) {
     int w = im.width();
     int h = im.height();
     float Kpurcent = 0.3;
+
     int epsilon = 1000000;
+
     openWindow(w, h);
     display(im);
 
     click();
+    std::cout<<"En cours"<<std::endl;
     LsTree tree(im.data(), w, h);
 
 //    LsShape* shapes = new LsShape[13];
@@ -57,7 +60,7 @@ int main(int argc, char* argv[]) {
     setActiveWindow(w1);
     drawTree(tree);
     histo(hist,grad,h,w);
-    tree.shapes[0].MeanB(tree.iNbShapes,epsilon,Kpurcent,grad,w,hist);
+    tree.MeanB(tree.iNbShapes,epsilon,Kpurcent,grad,w,hist);
 //    tree.maxMeaningfulBoundaries();
     Window w2 = openWindow(w,h);
     setActiveWindow(w2);

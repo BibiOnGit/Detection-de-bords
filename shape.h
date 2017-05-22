@@ -56,8 +56,6 @@ struct LsShape {
     //Find the Kth smallest gradient
     unsigned char MuK(float Kpercent, unsigned char * grad, int w);
 
-    //Select meaningful boundaries
-    void MeanB(int Nll, double epsilon, float Kpercent, unsigned char * grad, int w, int hist[]);
 };
 
 /// To walk the tree in pre- or post-order

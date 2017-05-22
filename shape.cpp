@@ -226,25 +226,4 @@ unsigned char LsShape::MuK(float Kpercent, unsigned char * grad, int w){
 
 
 
-void LsShape::MeanB(int Nll, double epsilon, float Kpercent, unsigned char * grad, int w, int hist[]){
-    unsigned char Mu = MuK(Kpercent,grad,w);
-    NFAk(Nll,Kpercent,Hc(Mu,hist));
-    if (NFA>epsilon){
-        remove();
-    }
-    if (this->find_sibling()){
-        LsShape* sibling = this->find_sibling();
-        sibling->MeanB(Nll,epsilon,Kpercent,grad,w,hist);
-    }
-
-    if (this->find_child()){
-        LsShape* child = this->find_child();
-        child->MeanB(Nll,epsilon,Kpercent,grad,w,hist);
-    }
-}
-
-
-
-
-
 

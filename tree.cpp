@@ -55,6 +55,20 @@ LsShape* LsTree::smallest_shape(int x, int y) {
     return pShape;
 }
 
+void LsTree::MeanB(int Nll, double epsilon, float Kpercent, unsigned char * grad, int w, int hist[]){///applied on the tree
+    LsTreeIterator itTree(LsTreeIterator::Pre,&this->shapes[0]);
+    LsTreeIterator endTree =itTree.end(LsTreeIterator::Pre,&this->shapes[0]);
+    unsigned char Mu;
+    for(;itTree!=endTree;++itTree){
+        LsShape* currentShape = *itTree;
+        Mu = currentShape->MuK(Kpercent,grad,w);
+        currentShape->NFAk(Nll,Kpercent,Hc(Mu,hist));
+        if(currentShape->NFA>epsilon){
+            currentShape->remove();
+        }
+    }
+}
+
 void LsTree::maxMeaningfulBoundaries(){
     setRemovable();
     Monotony monotony = NOT_MONOTONE;
@@ -94,6 +108,7 @@ void LsTree::maxMeaningfulBoundaries(){
         }
     }
 }
+
 void LsTree::monotoneSectionManager(LsShape *shape,Monotony &monotony,short int previousGrey,double minNFA, double currentNFA, int childNumber){
     char sign = (monotony == INCREASING)?1:-1;/*INCREASING and DECREASING case are managed in the same way
                                                 with the difference that the inegalities change*/
