@@ -53,11 +53,14 @@ int main(int argc, char* argv[]) {
 
     gradient(im.data(),grad,h,w);
     int hist[130051];
+    Window w1 = openWindow(w,h);
+    setActiveWindow(w1);
+    drawTree(tree);
     histo(hist,grad,h,w);
     tree.shapes[0].MeanB(tree.iNbShapes,epsilon,Kpurcent,grad,w,hist);
 //    tree.maxMeaningfulBoundaries();
-    Window w1 = openWindow(w,h);
-    setActiveWindow(w1);
+    Window w2 = openWindow(w,h);
+    setActiveWindow(w2);
     drawTree(tree);
     endGraphics();
     delete [] grad;

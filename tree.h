@@ -24,15 +24,15 @@ struct LsTree {
 
     void maxMeaningfulBoundaries();
     ///Keep only the maximal meaningful boundaries among the meaningful boundaries
-    ///
-    void drawTree();
+    ///by browsing the tree of meaningful boundaries and removing the non maximal
 
 private:
     enum Monotony{INCREASING, DECREASING, UNDETERMINED, NOT_MONOTONE};
-
-    void maxMeaningfulBoundaries_rec(LsShape *shape, Monotony monotony, double minNFA,
-                                     short int previousGrey);
-    ///Recursive function which browses the tree of meaningful shape and remove the non maximal
+    ///Different cases of monotony in a tree:
+    ///INCREASING = increasing level of grey
+    ///DECREASING = decreasing level of grey
+    ///UNDETERMINED = we don't know if the level of grey is increasing or decreasing at the beginning of a monotone section
+    ///NOT_MONOTONE = we aren't in a monotone section
 
     void monotoneSectionManager(LsShape *shape,Monotony &monotony,short int previousGrey,double minNFA,
                                 double currentNFA, int childNumber);
@@ -41,9 +41,10 @@ private:
     void minNfaShapeKeeper(LsShape *shape, double currentNFA, double &minNFA, bool shapeIsPivot);
     ///Remove the shape(if it isn't a pivot) which has the bigger NFA between the current shape and his parent
 
-    void flst_td(const unsigned char* gray); ///< Top-down algo
-
     void setRemovable();
+    ///Set the attribute "removable" to true of every shape of the tree
+
+    void flst_td(const unsigned char* gray); ///< Top-down algo
 
 };
 

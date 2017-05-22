@@ -160,7 +160,7 @@ void LsShape::NFAk(int Nll, float Kpercent, double Hc){
 
 void LsShape::remove(){
     LsShape* parent = find_parent();
-    if(! parent){
+    if(!parent){
         return;
     }
     bIgnore = true;

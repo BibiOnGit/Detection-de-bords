@@ -55,63 +55,62 @@ LsShape* LsTree::smallest_shape(int x, int y) {
     return pShape;
 }
 
-
-void LsTree::maxMeaningfulBoundaries_rec(LsShape* shape, Monotony monotony, double minNFA,
-                                         short int previousGrey){
-    int childNumber = shape->childNumber();
-    double currentNFA = shape->NFA;
-    if(childNumber == 0 ){
-        if((monotony == INCREASING && previousGrey <=shape->gray)
-                ||(monotony == DECREASING && previousGrey >=shape->gray)
-                || monotony == UNDETERMINED){
-            minNfaShapeKeeper(shape,currentNFA,minNFA,false);
-            return;
-        }
-     }
-    else{
-        if(monotony == NOT_MONOTONE && childNumber == 1){
-            monotony = UNDETERMINED;
-            minNFA = currentNFA;
-        }
-        else if(monotony == UNDETERMINED){
-            minNfaShapeKeeper(shape,currentNFA,minNFA,false);
-            if(childNumber == 1)
-                monotony = (previousGrey > shape->gray)?DECREASING:INCREASING;
-            else
-                monotony = NOT_MONOTONE;
-        }
-        else if(monotony == DECREASING || monotony == INCREASING){
-            monotoneSectionManager(shape,monotony,previousGrey,minNFA,currentNFA,childNumber);
-        }
-        previousGrey = shape->gray;
-        shape = shape->find_child();
-        do{
-            maxMeaningfulBoundaries_rec(shape,monotony,minNFA,previousGrey);
-            shape = shape->find_sibling();
-        }while(shape !=0);
-    }
-}
 void LsTree::maxMeaningfulBoundaries(){
     setRemovable();
-    LsShape* root = &shapes[0];
-    maxMeaningfulBoundaries_rec(root,NOT_MONOTONE,0,0);
+    Monotony monotony = NOT_MONOTONE;
+    LsTreeIterator itTree(LsTreeIterator::Pre,&shapes[0]);
+    short int previousGrey = (*itTree)->gray;
+    double minNFA = (*itTree)->NFA;
+    ++itTree;//We begin by the shape just after the root
+    LsTreeIterator endTree =itTree.end(LsTreeIterator::Pre,&shapes[0]);
+
+    for(;itTree!=endTree;++itTree){
+        LsShape* currentShape = *itTree;
+        int childNumber = currentShape->childNumber();
+        double currentNFA = currentShape->NFA;
+        if(childNumber == 0){//No child
+            if((monotony == INCREASING && previousGrey <=currentShape->gray)
+                    ||(monotony == DECREASING && previousGrey >=currentShape->gray)
+                    || (monotony == UNDETERMINED)){//In a monotone section
+                minNfaShapeKeeper(currentShape,currentNFA,minNFA,false);
+            }
+         }
+        else{//One or several children
+            if(monotony == NOT_MONOTONE && childNumber == 1){//Beginning of a new monotone section
+                monotony = UNDETERMINED;
+                minNFA = currentNFA;
+            }
+            else if(monotony == UNDETERMINED){//Second shape of a monotone section
+                minNfaShapeKeeper(currentShape,currentNFA,minNFA,false);
+                if(childNumber == 1)
+                    monotony = (previousGrey > currentShape->gray)?DECREASING:INCREASING;
+                else
+                    monotony = NOT_MONOTONE;
+            }
+            else if(monotony == DECREASING || monotony == INCREASING){//Shape in a monotone section
+                monotoneSectionManager(currentShape,monotony,previousGrey,minNFA,currentNFA,childNumber);
+            }
+            previousGrey = currentShape->gray;
+        }
+    }
 }
 void LsTree::monotoneSectionManager(LsShape *shape,Monotony &monotony,short int previousGrey,double minNFA, double currentNFA, int childNumber){
-    char sign = (monotony == INCREASING)?1:-1;
+    char sign = (monotony == INCREASING)?1:-1;/*INCREASING and DECREASING case are managed in the same way
+                                                with the difference that the inegalities change*/
     if(childNumber >1){
         monotony = NOT_MONOTONE;
     }
-    else{
-        if(sign*shape->gray >= sign*previousGrey){
-            if(sign*shape->find_child()->gray < sign*shape->gray)
-                minNfaShapeKeeper(shape,currentNFA,minNFA,true);
+    else{//One child
+        if(sign*shape->gray >= sign*previousGrey){ //The monotony doesn't change
+            if(sign*shape->find_child()->gray < sign*shape->gray)//But the monotony changes just after
+                minNfaShapeKeeper(shape,currentNFA,minNFA,true); //Current shape is a pivot
             else
                 minNfaShapeKeeper(shape,currentNFA,minNFA,false);
         }
-        else{
+        else{//The monotony changes
             monotony = (monotony==INCREASING)?DECREASING:INCREASING;
-            if(sign*shape->find_child()->gray > sign*shape->gray)
-                minNfaShapeKeeper(shape,currentNFA,minNFA,true);
+            if(sign*shape->find_child()->gray > sign*shape->gray)//Monotony changes right after
+                minNfaShapeKeeper(shape,currentNFA,minNFA,true);//Current shape is a pivot
             else
                 minNfaShapeKeeper(shape,currentNFA,minNFA,false);
         }
@@ -119,19 +118,21 @@ void LsTree::monotoneSectionManager(LsShape *shape,Monotony &monotony,short int 
 }
 void LsTree::minNfaShapeKeeper(LsShape *shape,double currentNFA,double &minNFA, bool shapeIsPivot){
     LsShape* parent = shape->find_parent();
-    if(currentNFA < minNFA && parent->removable){
+    if(currentNFA < minNFA && !(parent->pivotShape)){/*NFA of current shape is smaller than the NFA
+                                                  of the parent so we remove the parent if it's not a pivot*/
         parent->remove();
         minNFA = currentNFA;
         if(shapeIsPivot){
-            shape->removable = false;
+            shape->pivotShape = true;
         }
     }
-    else if(!shapeIsPivot)
+    else if(!shapeIsPivot)/*NFA of current shape is bigger than the NFA
+                            of the parent so we remove the currentShape if it's not a pivot*/
         shape->remove();
 }
 void LsTree::setRemovable(){
     for(int i=0;i<iNbShapes;i++){
-        shapes[i].removable = true;
+        shapes[i].pivotShape = false;
     }
 }
 

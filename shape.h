@@ -41,7 +41,7 @@ struct LsShape {
 
     int childNumber();
 
-    bool removable;
+    bool pivotShape;
 
     double NFA;
 
