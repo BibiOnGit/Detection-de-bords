@@ -1,22 +1,11 @@
 #include <Imagine/Images.h>
 #include "tree.h"
 #include "utils.h"
+#include "drawtree.h"
 #include "histogramme.h"
 #include <iostream>
-using namespace Imagine;
 
-void drawTree(LsTree tree) {
-    LsTreeIterator itTree(LsTreeIterator::Pre,&tree.shapes[0]);
-    LsTreeIterator endTree =itTree.end(LsTreeIterator::Pre,&tree.shapes[0]);
-    for(;itTree!=endTree;++itTree){
-        LsShape* currentShape = *itTree;
-        noRefreshBegin();
-        std::vector<LsPoint>::iterator itShape, endShape=currentShape->contour.end();
-        for(itShape=currentShape->contour.begin(); itShape!=endShape; ++itShape)
-            drawPoint(itShape->x, itShape->y, BLACK);
-        noRefreshEnd();
-    }
-}
+using namespace Imagine;
 
 int main(int argc, char* argv[]) {
     if(argc!=2) {
@@ -31,7 +20,9 @@ int main(int argc, char* argv[]) {
     int w = im.width();
     int h = im.height();
     float Kpurcent = 0.3;
-    int epsilon = 100000000;
+
+    int epsilon = 1000000;
+
     openWindow(w, h);
     display(im);
 
