@@ -55,29 +55,32 @@ LsShape* LsTree::smallest_shape(int x, int y) {
     return pShape;
 }
 
-void LsTree::MeanB(int Nll, double epsilon, float Kpercent, unsigned char * grad, int w, int hist[]){///applied on the tree
+void LsTree::MeanB(const int Nll,const int epsilon,const double Kpercent,const int * grad,const int w,const int* hist){
     LsTreeIterator itTree(LsTreeIterator::Pre,&this->shapes[0]);
     LsTreeIterator endTree =itTree.end(LsTreeIterator::Pre,&this->shapes[0]);
+    std::vector <LsShape*> shapeToRemove;
     unsigned char Mu;
     for(;itTree!=endTree;++itTree){
         LsShape* currentShape = *itTree;
         Mu = currentShape->MuK(Kpercent,grad,w);
         currentShape->NFAk(Nll,Kpercent,Hc(Mu,hist));
         if(currentShape->NFA>epsilon){
-            currentShape->remove();
+            shapeToRemove.push_back(currentShape);
         }
+    }
+    for(int i=0;i<shapeToRemove.size();i++){
+        shapeToRemove[i]->remove();
     }
 }
 
 void LsTree::maxMeaningfulBoundaries(){
-    setRemovable();
+    setPivot();
     Monotony monotony = NOT_MONOTONE;
     LsTreeIterator itTree(LsTreeIterator::Pre,&shapes[0]);
     short int previousGrey = (*itTree)->gray;
     double minNFA = (*itTree)->NFA;
     ++itTree;//We begin by the shape just after the root
     LsTreeIterator endTree =itTree.end(LsTreeIterator::Pre,&shapes[0]);
-
     for(;itTree!=endTree;++itTree){
         LsShape* currentShape = *itTree;
         int childNumber = currentShape->childNumber();
@@ -145,7 +148,7 @@ void LsTree::minNfaShapeKeeper(LsShape *shape,double currentNFA,double &minNFA, 
                             of the parent so we remove the currentShape if it's not a pivot*/
         shape->remove();
 }
-void LsTree::setRemovable(){
+void LsTree::setPivot(){
     for(int i=0;i<iNbShapes;i++){
         shapes[i].pivotShape = false;
     }

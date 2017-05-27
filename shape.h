@@ -24,16 +24,16 @@ struct LsShape {
     LsPoint* pixels; ///< Array of pixels in shape
     std::vector<LsPoint> contour; ///< Level line
 
-    int length();///<Floor of the length of the level line
+    double length() const;///<Length of the level line
 
     int area; ///< Number of pixels in the shape
 
-    // Tree structure
+    /// Tree structure
     LsShape* parent;  ///< Smallest containing shape
     LsShape* sibling; ///< Siblings are linked
     LsShape* child;   ///< First child
 
-    // To move in the tree, taking into account that some shapes are ignored
+    /// To move in the tree, taking into account that some shapes are ignored
     LsShape* find_parent();
     LsShape* find_child();
     LsShape* find_sibling();
@@ -41,20 +41,18 @@ struct LsShape {
 
     int childNumber();
 
-    bool pivotShape;
+    bool pivotShape; ///< true if it's a shape where the grey monotony changes.
 
-    double NFA;
+    double NFA;///< NFA of the shape
 
-    // Function NFA : set the variable NFA
-    void NFAk(int Nll, float Kpercent, double Hc);
+    /// Function NFA : set the variable NFA
+    void NFAk(const int Nll, const double Kpercent, const double Hc);
 
-    // To remove non significant shapes
+    /// To remove non significant shapes
     void remove();
 
-    void setShape(LsShape *parent, LsShape *child, LsShape *sibling);
-
-    //Find the Kth smallest gradient
-    unsigned char MuK(float Kpercent, unsigned char * grad, int w);
+    ///Find the Kth smallest gradient
+    int MuK(const double Kpercent,const int *grad,const int w) const;
 
 };
 

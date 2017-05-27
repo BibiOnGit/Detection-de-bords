@@ -2,8 +2,8 @@
 #include <cmath>
 
 
-void gradient (unsigned char * u, unsigned char * grad, int h, int w){
-    grad = new unsigned char[h*w];
+void gradient (const unsigned char * u, int *& grad,const int h,const int w){
+    grad = new int[h*w];
     for (int i=0; i<h; i++){
         for (int j=0; j<w; j++){
             if(i==0 || j==0){
@@ -16,23 +16,21 @@ void gradient (unsigned char * u, unsigned char * grad, int h, int w){
         }
     }
 }
-
-void histo (int hist[], unsigned char * grad, int h, int w){// le 130051 provient du nombre total de valeurs de gradients
-    for( int i=0;i<h;i++){
+void histo (int* hist, const int *grad, const int h, const int w){
+    for(int i=0;i<HIST_SIZE;i++)//initialization
+        hist[i]=0;
+    for( int i=0;i<h;i++){ //fill
         for(int j=0;j<w;j++){
             hist[grad[i*w+j]]++;
         }
     }
-    for(int i=130050;i>=0;i--){
+    for(int i=HIST_SIZE -1;i>=0;i--)//cumulative histo
         hist[i]+=hist[i+1];
-    }
-
 }
 
-double Hc(int mu, int hist[]){
-    if (mu==130051){
+double Hc(const int mu, const int *hist){
+    if (mu==HIST_SIZE)
         return 0;
-    }
     return double(hist[mu+1])/double(hist[1]);
 }
 

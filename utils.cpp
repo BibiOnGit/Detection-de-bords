@@ -1,5 +1,5 @@
 #include "utils.h"
-void pascalTriangle(std::vector<int>& t, int n){
+void pascalTriangle(std::vector<int>& t,const int n){
     for(int i=1; i<=n;i++){
         for(int j=0;j<=i/2;j++){
             if(j==0)
@@ -18,7 +18,7 @@ void pascalTriangle(std::vector<int>& t, int n){
     }
 }
 
-double binomiale(int k, int n, float p){
+double binomiale(const int k,const int n,const double p){
     std::vector<int> t;
     t.push_back(1);//zero choose zero
     assert(k <=n);
