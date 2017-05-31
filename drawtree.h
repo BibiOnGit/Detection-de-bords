@@ -6,6 +6,8 @@
 
 using namespace Imagine;
 
+void drawZoomTree(const LsTree &tree);
+
 void drawTree(const LsTree &tree);
 
 #endif // DRAWTREE_H

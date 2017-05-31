@@ -23,7 +23,7 @@ struct LsTree {
     LsShape** smallestShape;
 
     ///
-    void MeanB(const int Nll, const int epsilon, const double Kpercent, const int *grad, const int w, const int h, const int *hist, const std::vector<int> &pascTri);
+    void MeanB(const int Nll, const double epsilon, const double Kpercent, const int *grad, const int w, const int h, const int *hist, const std::vector<int> &pascTri);
 
     ///Keep only the maximal meaningful boundaries among the meaningful boundaries
     ///by browsing the tree of meaningful boundaries and removing the non maximal

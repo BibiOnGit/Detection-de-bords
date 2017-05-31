@@ -55,7 +55,7 @@ LsShape* LsTree::smallest_shape(int x, int y) {
     return pShape;
 }
 
-void LsTree::MeanB(const int Nll,const int epsilon,const double Kpercent,const int * grad,
+void LsTree::MeanB(const int Nll,const double epsilon,const double Kpercent,const int * grad,
                    const int w,const int h,const int* hist,const std::vector<int> &pascTri){
     LsTreeIterator itTree(LsTreeIterator::Pre,&this->shapes[0]);
     LsTreeIterator endTree =itTree.end(LsTreeIterator::Pre,&this->shapes[0]);
