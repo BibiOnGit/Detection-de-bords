@@ -38,12 +38,12 @@ int main(int argc, char* argv[]){
     int* hist = new int[HIST_SIZE];
     histo(hist,grad,h,w);
 
-    Window w2 = openWindow(w,h);
+    Window w2 = openWindow(2*w,2*h);
     setActiveWindow(w2);
     tree.MeanB(tree.iNbShapes,epsilon,Kpercent,grad,w,h,hist,pascTri);
 //    tree.maxMeaningfulBoundaries();
 
-    drawTree(tree);
+    drawTree(tree);//for a window that is Twice biger
 
     std::cout << "Termine" <<std::endl;
     noRefreshEnd();
