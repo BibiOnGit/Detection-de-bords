@@ -81,9 +81,7 @@ void LsTree::maxMeaningfulBoundaries(){
     ++itTree;//We begin by the shape just after the root
     LsTreeIterator endTree =itTree.end(LsTreeIterator::Pre,&shapes[0]);
     std::vector <LsShape*> shapesToRemove;
-    int compteur = 0;
     for(;itTree!=endTree;++itTree){
-        compteur++;
         LsShape* currentShape = *itTree;
         int childNumber = currentShape->childNumber();
         double currentNFA = currentShape->NFA;
@@ -112,10 +110,10 @@ void LsTree::maxMeaningfulBoundaries(){
             previousGrey = currentShape->gray;
         }
     }
-    std::cout << compteur << std::endl;
     for(int i=0;i<shapesToRemove.size();i++){
         shapesToRemove[i]->remove();
     }
+    std::cout << shapesToRemove.size() << std::endl;
 }
 
 void LsTree::monotoneSectionManager(LsShape *shape,Monotony &monotony,short int previousGrey,double minNFA, double currentNFA, int childNumber,

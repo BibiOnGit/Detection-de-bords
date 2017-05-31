@@ -134,16 +134,17 @@ double LsShape::length()const{
 }
 
 int LsShape::childNumber(){
-    if(find_child() ==0){
+    LsShape* currentChild = find_child();
+    if(!currentChild){
         return 0;
     }
     else{
-        LsShape* currentChild = find_child();
         int counter = 1;
-        while(currentChild ->find_sibling() !=0){
+        while(currentChild ->find_sibling()){
             counter++;
             currentChild = currentChild->find_sibling();
         }
+        return counter;
 
     }
 }

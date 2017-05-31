@@ -21,7 +21,7 @@ int main(int argc, char* argv[]){
     int w = im.width();
     int h = im.height();
     double Kpercent = 0.4;
-    int epsilon = 30000;
+    int epsilon = 100000;
 
     Window w1 = openWindow(w,h);
     setActiveWindow(w1);
@@ -41,7 +41,8 @@ int main(int argc, char* argv[]){
     Window w2 = openWindow(2*w,2*h);
     setActiveWindow(w2);
     tree.MeanB(tree.iNbShapes,epsilon,Kpercent,grad,w,h,hist,pascTri);
-//    tree.maxMeaningfulBoundaries();
+
+    tree.maxMeaningfulBoundaries();
 
     drawTree(tree);//for a window that is Twice biger
 
