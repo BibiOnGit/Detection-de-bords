@@ -5,7 +5,6 @@
 #include "utils.h"
 #include "histogramme.h"
 
-
 /// Structure for a pixel, 2 coordinates in image plane.
 struct LsPoint {
     short int x;
@@ -24,37 +23,40 @@ struct LsShape {
     LsPoint* pixels; ///< Array of pixels in shape
     std::vector<LsPoint> contour; ///< Level line
 
-    double length() const;///<Length of the level line
-
     int area; ///< Number of pixels in the shape
 
-    /// Tree structure
+    // Tree structure
     LsShape* parent;  ///< Smallest containing shape
     LsShape* sibling; ///< Siblings are linked
     LsShape* child;   ///< First child
 
-    /// To move in the tree, taking into account that some shapes are ignored
+    // To move in the tree, taking into account that some shapes are ignored
     LsShape* find_parent();
     LsShape* find_child();
     LsShape* find_sibling();
     LsShape* find_prev_sibling();
 
-    int childNumber();
-
     bool pivotShape; ///< true if it's a shape where the grey monotony changes.
 
     double NFA;///< NFA of the shape
 
+    int childNumber();
+
+    double length()const;
+
     /// Function NFA : set the variable NFA
-    void NFAk(const int Nll, const double Kpercent, const double Hc);
+    void NFAk(const int Nll, const double Kpercent, const int *hist, const std::vector<int> &pascTri, const int *grad, const int w, const int h);
 
     /// To remove non significant shapes
     void remove();
 
     ///Find the Kth smallest gradient
-    int MuK(const double Kpercent,const int *grad,const int w) const;
+    int MuK(const double Kpercent, const int *grad, const int w, const int h) const;
 
 };
+
+bool descendent(LsShape* parent, LsShape* s);
+LsShape* common_ancestor(LsShape* s, LsShape* t);
 
 /// To walk the tree in pre- or post-order
 class LsTreeIterator {
@@ -93,6 +95,5 @@ inline bool LsTreeIterator::operator!=(const LsTreeIterator& it) const
 
 inline LsShape* LsTreeIterator::operator*() const
 { return s; }
-
 
 #endif

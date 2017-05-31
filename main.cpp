@@ -4,6 +4,7 @@
 #include "drawtree.h"
 #include "histogramme.h"
 #include <iostream>
+#include <limits>
 
 using namespace Imagine;
 
@@ -19,8 +20,8 @@ int main(int argc, char* argv[]){
     }
     int w = im.width();
     int h = im.height();
-    double Kpurcent = 0.1;
-    int epsilon = 1000;
+    double Kpercent = 0.4;
+    int epsilon = 30000;
 
     Window w1 = openWindow(w,h);
     setActiveWindow(w1);
@@ -29,19 +30,24 @@ int main(int argc, char* argv[]){
     click();
     std::cout<<"En cours"<<std::endl;
 
-
+    std::vector<int> pascTri;
+    pascTri.push_back(1);
+    pascalTriangle(pascTri,30);
     int * grad;
     gradient(im.data(),grad,h,w);
     int* hist = new int[HIST_SIZE];
     histo(hist,grad,h,w);
 
-
     Window w2 = openWindow(w,h);
     setActiveWindow(w2);
-    tree.MeanB(tree.iNbShapes,epsilon,Kpurcent,grad,w,hist);
-    tree.maxMeaningfulBoundaries();
+    tree.MeanB(tree.iNbShapes,epsilon,Kpercent,grad,w,h,hist,pascTri);
+//    tree.maxMeaningfulBoundaries();
+
     drawTree(tree);
 
+    std::cout << "Termine" <<std::endl;
+    noRefreshEnd();
+    delete [] hist;
     delete [] grad;
     endGraphics();
     return 0;

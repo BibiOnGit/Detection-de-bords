@@ -23,7 +23,7 @@ struct LsTree {
     LsShape** smallestShape;
 
     ///
-    void MeanB(const int Nll, const int epsilon, const double Kpercent, const int *grad, const int w, const int *hist);
+    void MeanB(const int Nll, const int epsilon, const double Kpercent, const int *grad, const int w, const int h, const int *hist, const std::vector<int> &pascTri);
 
     ///Keep only the maximal meaningful boundaries among the meaningful boundaries
     ///by browsing the tree of meaningful boundaries and removing the non maximal
@@ -38,11 +38,11 @@ private:
     enum Monotony{INCREASING, DECREASING, UNDETERMINED, NOT_MONOTONE};
 
     ///Manage the tricky case of a shape situated in a monotone section
-    void monotoneSectionManager(LsShape *shape,Monotony &monotony,short int previousGrey,double minNFA,
-                                double currentNFA, int childNumber);
+    void monotoneSectionManager(LsShape *shape, Monotony &monotony, short int previousGrey, double minNFA,
+                                double currentNFA, int childNumber, std::vector<LsShape *> &shapesToRemove);
 
     ///Remove the shape(if it isn't a pivot) which has the bigger NFA between the current shape and his parent
-    void minNfaShapeKeeper(LsShape *shape, double currentNFA, double &minNFA, bool shapeIsPivot);
+    void minNfaShapeKeeper(LsShape *shape, double currentNFA, double &minNFA, bool shapeIsPivot, std::vector<LsShape *> &shapesToRemove);
 
     ///Set the attribute "isPivot" to true of every shape of the tree
     void setPivot();

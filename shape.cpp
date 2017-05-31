@@ -27,50 +27,18 @@ LsShape* LsShape::find_child() {
     for(LsShape* pShape = child; pShape; pShape = pShape->sibling)
         if((pShapeNotRemoved = ls_shape_of_subtree(pShape)) != 0)
             break;
-    return pShapeNotRemoved;  
-}
-
-
-/// Returns the euclidien length of the level line
-double LsShape::length()const{
-    double longueur=0;
-    for(int i=0;i<contour.size()-1;i++){
-        if(contour[i].x==contour[i+1].x ||contour[i].y==contour[i+1].y ){
-            longueur++;
-        }
-        else{
-            longueur+=std::sqrt(2);
-        }
-    }
-    if(contour[0].x==contour[contour.size()-1].x ||contour[0].y==contour[contour.size()-1].y ){
-        longueur++;
-    }
-    else{
-        longueur+=std::sqrt(2);
-    }
-    return longueur;
-
+    return pShapeNotRemoved;
 }
 
 /// Find next sibling, taking into account that some shapes are removed
 LsShape* LsShape::find_sibling() {
-    LsShape *pShape1 = 0, *pShape2 = 0;
     // First look at the siblings in the original tree
-    for(pShape1 = sibling; pShape1 != 0; pShape1 = pShape1->sibling)
-        if((pShape2 = ls_shape_of_subtree(pShape1)) != 0)
-            return pShape2;
+    for(LsShape *s1=sibling,*s2; s1 != 0; s1 = s1->sibling)
+        if((s2 = ls_shape_of_subtree(s1)) != 0)
+            return s2;
     if(parent == 0 || ! parent->bIgnore)
         return 0; // Parent in original tree is also parent in true tree: done
-    // Not found: find node in original tree just before the true parent
-    LsShape* pShape = this;
-    do
-        pShape = pShape->parent;
-    while(pShape->parent->bIgnore);
-    // Look at the siblings of this node
-    for(pShape1 = pShape->sibling; pShape1; pShape1 = pShape1->sibling)
-        if((pShape2 = ls_shape_of_subtree(pShape1)) != 0)
-            return pShape2;
-    return 0;
+    return parent->find_sibling();
 }
 
 LsShape* LsShape::find_prev_sibling() {
@@ -79,7 +47,6 @@ LsShape* LsShape::find_prev_sibling() {
         return 0;
     pNext = pNext->find_child();
     LsShape* s = 0;
-    std::cout << "find_prev_sibling" <<std::endl;
     while(pNext != this) {
         s = pNext;
         pNext = s->find_sibling();
@@ -87,21 +54,24 @@ LsShape* LsShape::find_prev_sibling() {
     return s;
 }
 
-
-int LsShape::childNumber(){
-    if(find_child() ==0){
-        return 0;
-    }
-    else{
-        LsShape* currentChild = find_child();
-        int counter = 1;
-        while(currentChild ->find_sibling() !=0){
-            counter++;
-            currentChild = currentChild->find_sibling();
-        }
-
-    }
+/// Indicate if \a s is a descendent of \a parent.
+bool descendent(LsShape* parent, LsShape* s) {
+    while(s!=parent && s->area < parent->area)
+        s = s->parent;
+    return (s==parent);
 }
+
+/// Return closest common ancestor to shapes \a s and \a t.
+LsShape* common_ancestor(LsShape* s, LsShape* t) {
+    while(s!=t) {
+        while(s->area < t->area)
+            s = s->find_parent();
+        while(t->area < s->area)
+            t = t->find_parent();
+    }
+    return s;
+}
+
 
 LsTreeIterator::LsTreeIterator(Order ord, LsShape* shape, bool /*dummy*/)
 : s(shape), o(ord) {}
@@ -126,7 +96,7 @@ LsShape* LsTreeIterator::go_bottom(LsShape* s) {
 LsShape* LsTreeIterator::uncle(LsShape* s) {
     LsShape* sNew;
     while((sNew = s->find_sibling()) == 0)
-        if((s = s->find_parent()) == 0)
+        if((s = s->parent) == 0)
             break;
     return sNew;
 }
@@ -142,13 +112,49 @@ LsTreeIterator& LsTreeIterator::operator++() {
     return *this;
 }
 
+/// Returns the euclidien length of the level line
+double LsShape::length()const{
+    double longueur=0;
+    for(int i=0;i<contour.size()-1;i++){
+        if(contour[i].x==contour[i+1].x ||contour[i].y==contour[i+1].y ){
+            longueur++;
+        }
+        else{
+            longueur+=std::sqrt(2);
+        }
+    }
+    if(contour[0].x==contour[contour.size()-1].x ||contour[0].y==contour[contour.size()-1].y ){
+        longueur++;
+    }
+    else{
+        longueur+=std::sqrt(2);
+    }
+    return longueur;
+
+}
+
+int LsShape::childNumber(){
+    if(find_child() ==0){
+        return 0;
+    }
+    else{
+        LsShape* currentChild = find_child();
+        int counter = 1;
+        while(currentChild ->find_sibling() !=0){
+            counter++;
+            currentChild = currentChild->find_sibling();
+        }
+
+    }
+}
 // Function NFA
-void LsShape::NFAk(const int Nll,const double Kpercent,const double Hc){
+void LsShape::NFAk(const int Nll,const double Kpercent,const int *hist,const std::vector<int> &pascTri, const int*grad,const int w, const int h){
     int K = Kpercent*contour.size();
+    double l2n = length()/(2*contour.size());
     if(K==0)
         K=1;
-    double l2n = length()/(2*contour.size());
-    double min = binomiale(int((K-1) * l2n),int(contour.size() * l2n), Hc );
+    double hc = Hc(MuK(Kpercent,grad,w,h),hist);
+    double min = binomiale((K-1) * l2n,contour.size() * l2n,hc,pascTri );
     NFA = Nll * min * K;
 }
 
@@ -161,13 +167,17 @@ void LsShape::remove(){
 }
 
 
-int LsShape::MuK(const double Kpercent, const int *grad, const int w)const{
+int LsShape::MuK(const double Kpercent, const int *grad, const int w,const int h)const{
     int K = Kpercent*contour.size();
     std::vector<int> gradient_shape;
+    int x,y;
     for (int i=0; i<contour.size(); i++){
-        gradient_shape.push_back(grad[contour[i].x+w*contour[i].y]);
+           x = (contour[i].x==w)?contour[i].x-1:contour[i].x;
+           y = (contour[i].y==h)?contour[i].y-1:contour[i].y;
+           gradient_shape.push_back(grad[x+w*y]);
     }
     std::sort(gradient_shape.begin(),gradient_shape.end());
+
     if(K==0){
         return gradient_shape[0];
     }
