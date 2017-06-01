@@ -80,8 +80,11 @@ void LsTree::maxMeaningfulBoundaries(){
     double minNFA = (*itTree)->NFA;
     ++itTree;//We begin by the shape just after the root
     LsTreeIterator endTree =itTree.end(LsTreeIterator::Pre,&shapes[0]);
-    std::vector <LsShape*> shapesToRemove;
+    LsShape* shapeToRemove=0;
     for(;itTree!=endTree;++itTree){
+        if(shapeToRemove!=0){
+            shapeToRemove->remove();
+        }
         LsShape* currentShape = *itTree;
         int childNumber = currentShape->childNumber();
         double currentNFA = currentShape->NFA;
@@ -89,7 +92,7 @@ void LsTree::maxMeaningfulBoundaries(){
             if((monotony == INCREASING && previousGrey <=currentShape->gray)
                     ||(monotony == DECREASING && previousGrey >=currentShape->gray)
                     || (monotony == UNDETERMINED)){//In a monotone section
-                minNfaShapeKeeper(currentShape,currentNFA,minNFA,false,shapesToRemove);
+                minNfaShapeKeeper(currentShape,currentNFA,minNFA,false,shapeToRemove);
             }
          }
         else{//One or several children
@@ -98,26 +101,22 @@ void LsTree::maxMeaningfulBoundaries(){
                 minNFA = currentNFA;
             }
             else if(monotony == UNDETERMINED){//Second shape of a monotone section
-                minNfaShapeKeeper(currentShape,currentNFA,minNFA,false,shapesToRemove);
+                minNfaShapeKeeper(currentShape,currentNFA,minNFA,false,shapeToRemove);
                 if(childNumber == 1)
                     monotony = (previousGrey > currentShape->gray)?DECREASING:INCREASING;
                 else
                     monotony = NOT_MONOTONE;
             }
             else if(monotony == DECREASING || monotony == INCREASING){//Shape in a monotone section
-                monotoneSectionManager(currentShape,monotony,previousGrey,minNFA,currentNFA,childNumber,shapesToRemove);
+                monotoneSectionManager(currentShape,monotony,previousGrey,minNFA,currentNFA,childNumber,shapeToRemove);
             }
             previousGrey = currentShape->gray;
         }
     }
-    for(int i=0;i<shapesToRemove.size();i++){
-        shapesToRemove[i]->remove();
-    }
-    std::cout << shapesToRemove.size() << std::endl;
 }
 
-void LsTree::monotoneSectionManager(LsShape *shape,Monotony &monotony,short int previousGrey,double minNFA, double currentNFA, int childNumber,
-                                    std::vector <LsShape*>& shapesToRemove){
+void LsTree::monotoneSectionManager(LsShape *shape, Monotony &monotony, short int previousGrey, double minNFA, double currentNFA, int childNumber,
+                                    LsShape *&shapeToRemove){
     char sign = (monotony == INCREASING)?1:-1;/*INCREASING and DECREASING case are managed in the same way
                                                 with the difference that the inegalities change*/
     if(childNumber >1){
@@ -126,32 +125,33 @@ void LsTree::monotoneSectionManager(LsShape *shape,Monotony &monotony,short int 
     else{//One child
         if(sign*shape->gray >= sign*previousGrey){ //The monotony doesn't change
             if(sign*shape->find_child()->gray < sign*shape->gray)//But the monotony changes just after
-                minNfaShapeKeeper(shape,currentNFA,minNFA,true,shapesToRemove); //Current shape is a pivot
+                minNfaShapeKeeper(shape,currentNFA,minNFA,true,shapeToRemove); //Current shape is a pivot
             else
-                minNfaShapeKeeper(shape,currentNFA,minNFA,false,shapesToRemove);
+                minNfaShapeKeeper(shape,currentNFA,minNFA,false,shapeToRemove);
         }
         else{//The monotony changes
             monotony = (monotony==INCREASING)?DECREASING:INCREASING;
             if(sign*shape->find_child()->gray > sign*shape->gray)//Monotony changes right after
-                minNfaShapeKeeper(shape,currentNFA,minNFA,true,shapesToRemove);//Current shape is a pivot
+                minNfaShapeKeeper(shape,currentNFA,minNFA,true,shapeToRemove);//Current shape is a pivot
             else
-                minNfaShapeKeeper(shape,currentNFA,minNFA,false,shapesToRemove);
+                minNfaShapeKeeper(shape,currentNFA,minNFA,false,shapeToRemove);
         }
     }
 }
-void LsTree::minNfaShapeKeeper(LsShape *shape,double currentNFA,double &minNFA, bool shapeIsPivot,std::vector <LsShape*>& shapesToRemove ){
+void LsTree::minNfaShapeKeeper(LsShape *shape,double currentNFA,double &minNFA, bool shapeIsPivot,LsShape*& shapeToRemove ){
     LsShape* parent = shape->find_parent();
     if(currentNFA < minNFA && !(parent->pivotShape)){/*NFA of current shape is smaller than the NFA
                                                   of the parent so we remove the parent if it's not a pivot*/
-        shapesToRemove.push_back(parent);
+        parent->remove();
         minNFA = currentNFA;
         if(shapeIsPivot){
             shape->pivotShape = true;
         }
     }
-    else if(!shapeIsPivot)/*NFA of current shape is bigger than the NFA
+    else if(!shapeIsPivot){/*NFA of current shape is bigger than the NFA
                             of the parent so we remove the currentShape if it's not a pivot*/
-        shapesToRemove.push_back(shape);
+        shapeToRemove = shape;
+    }
 }
 void LsTree::setPivot(){
     for(int i=0;i<iNbShapes;i++){

@@ -39,10 +39,10 @@ private:
 
     ///Manage the tricky case of a shape situated in a monotone section
     void monotoneSectionManager(LsShape *shape, Monotony &monotony, short int previousGrey, double minNFA,
-                                double currentNFA, int childNumber, std::vector<LsShape *> &shapesToRemove);
+                                double currentNFA, int childNumber,LsShape *&shapesToRemove);
 
     ///Remove the shape(if it isn't a pivot) which has the bigger NFA between the current shape and his parent
-    void minNfaShapeKeeper(LsShape *shape, double currentNFA, double &minNFA, bool shapeIsPivot, std::vector<LsShape *> &shapesToRemove);
+    void minNfaShapeKeeper(LsShape *shape, double currentNFA, double &minNFA, bool shapeIsPivot, LsShape *&shapeToRemove);
 
     ///Set the attribute "isPivot" to true of every shape of the tree
     void setPivot();

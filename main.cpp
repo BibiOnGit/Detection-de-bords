@@ -20,7 +20,7 @@ int main(int argc, char* argv[]){
     int w = im.width();
     int h = im.height();
     double Kpercent = 0.4;
-    double epsilon = 10000;
+    double epsilon = pow(10,-8);
 
     Window w1 = openWindow(w,h);
     setActiveWindow(w1);
@@ -40,35 +40,9 @@ int main(int argc, char* argv[]){
     Window w2 = openWindow(w,h);
     setActiveWindow(w2);
     tree.MeanB(tree.iNbShapes,epsilon,Kpercent,grad,w,h,hist,pascTri);
-
     tree.maxMeaningfulBoundaries();
-
     drawTree(tree);
-    int x, y;
-    while(getMouse(x,y)==1) {
-        LsShape* s = tree.smallest_shape(x,y);
-        std::vector<LsPoint>::iterator it, end=s->contour.end();
-        std::cout << s->NFA << std::endl;
-        noRefreshBegin();
-        std::vector<int> gradshape;
-        for(it=s->contour.begin(); it!=end; ++it){
-            drawPoint(it->x, it->y, RED);
-            gradshape.push_back(grad[it->x+w*it->y]);
-        }
-        std::sort(gradshape.begin(),gradshape.end());
-        std::cout << gradshape[Kpercent*s->contour.size()-1] << std::endl;
-        int K = Kpercent*s->contour.size();
-        double l2n = s->length()/(2*s->contour.size());
-        if(K==0)
-            K=1;
-        double hc = Hc(gradshape[K-1],hist);
-        std::cout << hc << std::endl;
-        std::cout << Hc(4810,hist)<<std::endl;
-        double min = binomiale((K-1) * l2n,s->contour.size() * l2n,hc,pascTri );
-        std::cout << min << std::endl;
-        std::cout <<s->contour.size() << std::endl;
-        noRefreshEnd();
-    }
+
     Window w3 = openWindow(2*w,2*h);
     setActiveWindow(w3);
     drawZoomTree(tree);
