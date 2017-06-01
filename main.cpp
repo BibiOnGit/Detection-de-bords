@@ -37,12 +37,12 @@ int main(int argc, char* argv[]){
     int h = im.height();
     double Kpercent = 0.4;
 
-    double epsilon = pow(10,-30);
+    double epsilon = pow(10,-10);
 
     Window w1 = openWindow(w,h);
     setActiveWindow(w1);
 
-   // TransformationAffine(im);
+    TransformationAffine(im);
 
     display(im);
     LsTree tree(im.data(), w, h);
