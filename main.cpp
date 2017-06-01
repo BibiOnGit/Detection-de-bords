@@ -36,7 +36,8 @@ int main(int argc, char* argv[]){
     int w = im.width();
     int h = im.height();
     double Kpercent = 0.4;
-    double epsilon = pow(10,-50);
+
+    double epsilon = pow(10,-30);
 
     Window w1 = openWindow(w,h);
     setActiveWindow(w1);
@@ -59,10 +60,9 @@ int main(int argc, char* argv[]){
     Window w2 = openWindow(w,h);
     setActiveWindow(w2);
     tree.MeanB(tree.iNbShapes,epsilon,Kpercent,grad,w,h,hist,pascTri);
-
     tree.maxMeaningfulBoundaries();
-
     drawTree(tree);
+
 //    int x, y;
 //    while(getMouse(x,y)==1) {
 //        LsShape* s = tree.smallest_shape(x,y);
