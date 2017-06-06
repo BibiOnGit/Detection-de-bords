@@ -37,7 +37,8 @@ int main(int argc, char* argv[]){
     int h = im.height();
     double Kpercent = 0.4;
 
-    double epsilon = pow(10,-10);
+    double epsilon = pow(10,-4);
+    std::cout<<"k= " <<Kpercent<< " eps= "<<epsilon<< std::endl;
 
     Window w1 = openWindow(w,h);
     setActiveWindow(w1);
